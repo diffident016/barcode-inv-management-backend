@@ -8,6 +8,7 @@ import productRoute from './router/product.js'
 import purchaseRoute from './router/purchase.js'
 import salesRoute from './router/sales.js'
 import usersRoute from './router/user.js'
+import customerRoute from './router/customer.js'
 
 const app = express();
 
@@ -29,6 +30,15 @@ app.use("/api/sales", salesRoute);
 
 // Users API
 app.use('/api', usersRoute)
+
+app.use('/api/customer', customerRoute)
+
+// Bump Server
+app.get('/ping', (req, res) => {
+    res.json({
+        'connected': true
+    })
+})
 
 mongoose
     .connect(MONGOOSE_URI)
