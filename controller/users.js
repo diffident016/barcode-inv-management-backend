@@ -1,4 +1,5 @@
 import User from "../models/users.js";
+import { socketIO } from "../server.js";
 
 const getUser = async (req, res) => {
     const user = await User.findOne({
@@ -21,6 +22,7 @@ const addUser = async (req, res) => {
     addUser
         .save()
         .then((result) => {
+            socketIO.emit('update', true);
             res.status(200).send(result);
         })
         .catch((err) => console.log("Signup: ", err));

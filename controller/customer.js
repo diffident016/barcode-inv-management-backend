@@ -1,8 +1,8 @@
 import Customer from "../models/customers.js";
 import bcrypt from 'bcryptjs'
+import { socketIO } from "../server.js";
 
 const getCustomer = async (req, res) => {
-
 
     try {
         const customer = await Customer.findOne({
@@ -29,7 +29,8 @@ const getCustomer = async (req, res) => {
 
 const addCustomer = async (req, res) => {
 
-    const hashedPassword = bcrypt.hashSync(req.body.password, '@diffident016')
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt)
 
     let addCustomer = new Customer({
         name: req.body.name,
@@ -42,9 +43,15 @@ const addCustomer = async (req, res) => {
     addCustomer
         .save()
         .then((result) => {
+            socketIO.emit('update', true);
             res.status(200).send(result);
         })
         .catch((err) => console.log("Signup: ", err));
 };
 
-export { addCustomer, getCustomer }
+const getAllCustomer = async (req, res) => {
+    const findAllCustomers = await Customer.find().sort({ _id: -1 });
+    res.json(findAllCustomers);
+};
+
+export { addCustomer, getCustomer, getAllCustomer }

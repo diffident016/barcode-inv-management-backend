@@ -31,9 +31,9 @@ const ProductSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        available: {
+        sold: {
             type: Number,
-            required: true,
+            default: 0,
         },
         stock: {
             type: Number,

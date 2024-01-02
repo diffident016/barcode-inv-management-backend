@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const SalesSchema = new Schema(
+const OrderSchema = new Schema(
     {
         storeID: {
             type: Schema.Types.ObjectId,
@@ -29,25 +29,21 @@ const SalesSchema = new Schema(
             type: Number,
             required: true,
         },
-        dateRecord: {
+        orderDate: {
             type: String,
             required: true,
         },
-        totalSales: {
+        orderStatus: {
             type: Number,
             required: true,
         },
-        totalCost: {
+        orderAmount: {
             type: Number,
             required: true,
         },
-        totalRevenue: {
-            type: Number,
-            required: true,
-        }
     },
     { timestamps: true }
 );
 
-const Sales = model("sales", SalesSchema);
-export default Sales;
+const Order = model("orders", OrderSchema);
+export default Order;

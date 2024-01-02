@@ -8,20 +8,11 @@ import {
     searchProduct
 } from "../controller/product.js";
 
-// Add Product
+
 app.post("/add", addProduct);
-
-// Get All Products
-app.get("/get/:userId", getAllProducts);
-
-// Delete Selected Product Item
-app.get("/delete/:id", deleteSelectedProduct);
-
-// Update Selected Product
+app.get("/get/:storeID", getAllProducts);
+app.get("/delete/:productID", deleteSelectedProduct);
 app.post("/update", updateSelectedProduct);
-
-// Search Product
 app.get("/search", searchProduct);
-
 
 export default app;

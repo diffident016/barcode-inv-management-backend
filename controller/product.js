@@ -1,17 +1,12 @@
 import Product from "../models/product.js";
-import Purchase from "../models/purchase.js";
-import Sales from "../models/sales.js";
 
-// Add Post
 const addProduct = (req, res) => {
-    console.log("req: ", req.body);
     const addProduct = new Product({
         userID: req.body.userID,
         name: req.body.name,
         category: req.body.category,
         price: req.body.price,
         cost: req.body.cost,
-        available: req.body.available,
         vendor: req.body.vendor,
         stock: req.body.stock,
         description: req.body.description,
@@ -30,42 +25,38 @@ const addProduct = (req, res) => {
         });
 };
 
-// Get All Products
 const getAllProducts = async (req, res) => {
     const findAllProducts = await Product.find({
-        userID: req.params.userId,
-    }).sort({ _id: -1 }); // -1 for descending;
+        userID: req.params.storeID,
+    }).sort({ _id: -1 });
     res.json(findAllProducts);
 };
 
-// Delete Selected Product
 const deleteSelectedProduct = async (req, res) => {
     const deleteProduct = await Product.findByIdAndDelete(
-        { _id: req.params.id }
+        { _id: req.params.productID }
     );
-    const deletePurchaseProduct = await Purchase.findByIdAndDelete(
-        { ProductID: req.params.id }
-    );
-
-    const deleteSaleProduct = await Sales.findByIdAndDelete(
-        { ProductID: req.params.id }
-    );
-    res.json({ deleteProduct, deletePurchaseProduct, deleteSaleProduct });
+    res.json({ deleteProduct });
 };
 
-// Update Selected Product
 const updateSelectedProduct = async (req, res) => {
     try {
         const updatedResult = await Product.findByIdAndUpdate(
-            { _id: req.body.productID },
+            { _id: req.body._id },
             {
+                userID: req.body.userID,
                 name: req.body.name,
-                manufacturer: req.body.manufacturer,
+                category: req.body.category,
+                price: req.body.price,
+                cost: req.body.cost,
+                vendor: req.body.vendor,
+                stock: req.body.stock,
                 description: req.body.description,
+                barcode: req.body.barcode,
+                photoUrl: req.body.photoUrl
             },
             { new: true }
         );
-        console.log(updatedResult);
         res.json(updatedResult);
     } catch (error) {
         console.log(error);
@@ -73,7 +64,6 @@ const updateSelectedProduct = async (req, res) => {
     }
 };
 
-// Search Products
 const searchProduct = async (req, res) => {
     const searchTerm = req.query.searchTerm;
     const products = await Product.find({
