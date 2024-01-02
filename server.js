@@ -8,6 +8,7 @@ import productRoute from './router/product.js'
 import usersRoute from './router/user.js'
 import customerRoute from './router/customer.js'
 import orderRoute from './router/order.js'
+import salesRoute from './router/sales.js'
 import { Server } from "socket.io";
 import { createServer } from "http";
 
@@ -28,6 +29,7 @@ app.use("/api/product", productRoute);
 app.use('/api', usersRoute)
 app.use('/api/customer', customerRoute)
 app.use('/api/order', orderRoute)
+app.use('/api/sales', salesRoute)
 
 socketIO.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`)
