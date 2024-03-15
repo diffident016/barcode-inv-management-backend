@@ -1,21 +1,21 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
-const UserSchema = new Schema({
-    firstName: 'String',
-    lastName: 'String',
-    email: 'String',
+const UserSchema = new Schema(
+  {
+    name: "String",
+    email: "String",
     authId: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     userType: {
-        type: Schema.Types.Mixed,
-        required: true
+      type: Schema.Types.Mixed,
+      required: true,
     },
-    phoneNumber: 'String',
-    imageUrl: 'String',
-},
-    { timestamps: true }
+    phoneNumber: "String",
+    imageUrl: "String",
+  },
+  { timestamps: true }
 );
 
 const User = model("users", UserSchema);
