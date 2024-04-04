@@ -5,52 +5,37 @@ import Sales from "../models/sales.js";
 import { socketIO } from "../server.js";
 
 const addOrder = async (req, res) => {
-  const addOrderDetails = new Order({
+  const orderDetails = new Order({
     storeID: req.body.storeID,
-    customerID: req.body.customerID,
-    productID: req.body.productID,
-    customer: req.body.customer,
-    product: req.body.product,
-    quantity: req.body.quantity,
+    clerkID: req.body.clerkID,
+    products: req.body.products,
+    clerk: req.body.clerk,
+    totalItems: req.body.totalItems,
     orderDate: req.body.orderDate,
     orderStatus: req.body.orderStatus,
-    orderAmount: req.body.orderAmount,
+    totalAmount: req.body.totalAmount,
+    bill: req.body.bill,
+    change: req.body.change,
   });
 
-  const order = await Order.findOne({
-    storeID: req.body.storeID,
-    customerID: req.body.customerID,
-    productID: req.body.productID,
-    orderStatus: req.body.orderStatus,
-  });
+  await orderDetails.save();
 
-  if (!order) {
-    addOrderDetails
-      .save()
-      .then((result) => {
-        res.status(200).send(result);
+  const products = req.body.products;
+  const storeID = req.body.storeID;
+
+  Promise.all(products.map(async (order) => await proceedOrder(storeID, order)))
+    .then((_) =>
+      res.status(200).send({
+        status: "success",
+        message: "Order successful.",
       })
-      .catch((err) => {
-        console.log(err);
-        res.status(402).send(err);
-      });
-  } else {
-    Order.findByIdAndUpdate(
-      { _id: order._id },
-      {
-        quantity: order.quantity + req.body.quantity,
-        orderAmount: order.orderAmount + req.body.orderAmount,
-      },
-      { new: true }
     )
-      .then((result) => {
-        res.status(200).send(result);
+    .catch((err) =>
+      res.status(402).send({
+        status: "fail",
+        message: err,
       })
-      .catch((err) => {
-        console.log(err);
-        res.status(402).send(err);
-      });
-  }
+    );
 };
 
 const updateQuantity = async (req, res) => {
@@ -94,33 +79,13 @@ const updateQuantity = async (req, res) => {
     });
 };
 
-const proceedOrder = async (order) => {
-  const productID = order.productID;
+const proceedOrder = async (storeID, order) => {
+  const productID = order.product._id;
   const quantity = order.quantity;
 
-  const product = await Product.findById({
-    _id: productID,
-  });
-
-  const valid = product.stock - product.sold >= quantity;
-
-  if (!valid) {
-    return null;
-  }
-
-  const addOrderDetails = new Order({
-    storeID: order.storeID,
-    productID: order.productID,
-    product: order.product,
-    quantity: order.quantity,
-    orderDate: order.orderDate,
-    orderStatus: order.orderStatus,
-    orderAmount: order.orderAmount,
-  });
-
   const newSales = new Sales({
-    storeID: order.storeID,
-    productID: order.productID,
+    storeID: storeID,
+    productID: productID,
     product: order.product,
     quantity: quantity,
     dateRecord: new Date(),
@@ -129,11 +94,9 @@ const proceedOrder = async (order) => {
     totalRevenue: (order.product.price - order.product.cost) * quantity,
   });
 
-  await addOrderDetails.save();
-
   await Product.findByIdAndUpdate(
     {
-      _id: order.productID,
+      _id: productID,
     },
     {
       sold: order.product.sold + quantity,

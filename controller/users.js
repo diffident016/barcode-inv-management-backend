@@ -29,7 +29,6 @@ const addUser = async (req, res) => {
       res.status(200).send(result);
     })
     .catch((err) => console.log("Signup: ", err));
-  console.log("request: ", req.body);
 };
 
 export { getUser, addUser, getAllUsers };

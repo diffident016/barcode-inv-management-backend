@@ -1,4 +1,20 @@
 import { Schema, model } from "mongoose";
+import { ProductSchema } from "./product.js";
+
+const ProductOrder = new Schema({
+  product: {
+    type: ProductSchema,
+    required: true,
+  },
+  quantity: {
+    type: Schema.Types.Number,
+    required: true,
+  },
+  amount: {
+    type: Schema.Types.Number,
+    required: true,
+  },
+});
 
 const OrderSchema = new Schema(
   {
@@ -7,23 +23,18 @@ const OrderSchema = new Schema(
       ref: "users",
       required: true,
     },
-    customerID: {
+    clerkID: {
       type: Schema.Types.ObjectId,
       ref: "customer",
     },
-    productID: {
-      type: Schema.Types.ObjectId,
-      ref: "product",
-      required: true,
-    },
-    customer: {
+    clerk: {
       type: Schema.Types.Mixed,
     },
-    product: {
-      type: Schema.Types.Mixed,
+    products: {
+      type: [ProductOrder],
       required: true,
     },
-    quantity: {
+    totalItems: {
       type: Number,
       required: true,
     },
@@ -35,7 +46,15 @@ const OrderSchema = new Schema(
       type: Number,
       required: true,
     },
-    orderAmount: {
+    totalAmount: {
+      type: Number,
+      required: true,
+    },
+    bill: {
+      type: Number,
+      required: true,
+    },
+    change: {
       type: Number,
       required: true,
     },
